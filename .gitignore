@@ -1,0 +1,28 @@
+.vite/
+# Python
+backend/venv/
+backend/__pycache__/
+*.pyc
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Environment
+backend/.env
+.env
+
+# Uploads
+backend/uploads/
+uploads/
+
+# Dataset
+new_dataset/
+
+# Test files
+test_*.py
+verify_*.py
+
+# OS
+Thumbs.db
+.DS_Store
