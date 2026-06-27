@@ -1,3 +1,5 @@
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://agricrop-project.onrender.com';
+
 document.addEventListener('DOMContentLoaded', () => {
   setupDate();
   setupSidebar();
@@ -298,7 +300,7 @@ function setupNotifications() {
 
   // Update badge and load dropdown alerts
   function updateUnreadBadge() {
-    authFetch('http://127.0.0.1:8000/api/alerts/unread-count')
+    authFetch(`${API_BASE_URL}/api/alerts/unread-count`)
       .then(res => {
         if (!res.ok) throw new Error('Unread count fetch failed');
         return res.json();
@@ -321,7 +323,7 @@ function setupNotifications() {
   function loadDropdownAlerts() {
     if (!dropdownList) return;
 
-    authFetch('http://127.0.0.1:8000/api/alerts/recent?limit=5')
+    authFetch(`${API_BASE_URL}/api/alerts/recent?limit=5`)
       .then(res => {
         if (!res.ok) throw new Error('Recent alerts fetch failed');
         return res.json();
@@ -430,14 +432,14 @@ function setupNotifications() {
   if (markAllReadBtn) {
     markAllReadBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      authFetch('http://127.0.0.1:8000/api/alerts/recent?limit=100')
+      authFetch(`${API_BASE_URL}/api/alerts/recent?limit=100`)
         .then(res => res.json())
         .then(alerts => {
           const unreadAlerts = alerts.filter(a => a.status === 'Unread');
           if (unreadAlerts.length === 0) return;
 
           const promises = unreadAlerts.map(alert => 
-            authFetch(`http://127.0.0.1:8000/api/alerts/${alert.id}/read`, { method: 'POST' })
+            authFetch(`${API_BASE_URL}/api/alerts/${alert.id}/read`, { method: 'POST' })
           );
 
           Promise.all(promises)
@@ -477,7 +479,7 @@ function setupNotifications() {
 function handleAlertClick(alert) {
   // 1. Mark alert as read
   if (alert.status === 'Unread') {
-    authFetch(`http://127.0.0.1:8000/api/alerts/${alert.id}/read`, { method: 'POST' })
+    authFetch(`${API_BASE_URL}/api/alerts/${alert.id}/read`, { method: 'POST' })
       .then(res => {
         if (res.ok) {
           if (typeof window.refreshNotifications === 'function') {
@@ -712,7 +714,7 @@ function setupDiseaseDetection() {
       formData.append('file', blob, "leaf_early_blight.png");
     }
 
-    authFetch('http://127.0.0.1:8000/api/disease/predict', {
+    authFetch(`${API_BASE_URL}/api/disease/predict`, {
       method: 'POST',
       body: formData
     })
@@ -991,7 +993,7 @@ function setupSoilMoisture() {
 
     showToast('Calculating soil moisture prediction...');
 
-    authFetch('http://127.0.0.1:8000/api/moisture/predict', {
+    authFetch(`${API_BASE_URL}/api/moisture/predict`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -1327,7 +1329,7 @@ function setupProfile() {
         location: resolvedLocation
       };
 
-      authFetch('http://127.0.0.1:8000/api/fields', {
+      authFetch(`${API_BASE_URL}/api/fields`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -1452,7 +1454,7 @@ function setupFieldMap() {
   
   // Load fields dynamically
   function loadMapData() {
-    authFetch('http://127.0.0.1:8000/api/fields')
+    authFetch(`${API_BASE_URL}/api/fields`)
       .then(res => {
         if (!res.ok) throw new Error('Failed to load fields');
         return res.json();
@@ -1623,7 +1625,7 @@ function setupFieldMap() {
     drawerLoading.style.display = 'flex';
     drawerDetailsContent.style.display = 'none';
     
-    authFetch(`http://127.0.0.1:8000/api/fields/${fieldId}`)
+    authFetch(`${API_BASE_URL}/api/fields/${fieldId}`)
       .then(res => {
         if (!res.ok) throw new Error('Failed to load field details');
         return res.json();
@@ -1927,7 +1929,7 @@ function setupAlerts() {
   }
 
   function fetchAndRenderAlerts() {
-    authFetch('http://127.0.0.1:8000/api/alerts')
+    authFetch(`${API_BASE_URL}/api/alerts`)
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch alerts');
         return res.json();
@@ -2187,11 +2189,11 @@ function fetchDashboardData() {
   }
   
   Promise.all([
-    authFetch('http://127.0.0.1:8000/api/dashboard/overview').then(r => {
+    authFetch(`${API_BASE_URL}/api/dashboard/overview`).then(r => {
       if (!r.ok) throw new Error('Failed to load dashboard overview');
       return r.json();
     }),
-    authFetch('http://127.0.0.1:8000/api/fields').then(r => {
+    authFetch(`${API_BASE_URL}/api/fields`).then(r => {
       if (!r.ok) throw new Error('Failed to load fields data');
       return r.json();
     })
@@ -2785,7 +2787,7 @@ function setupAuthListeners() {
       btnLoginSubmit.disabled = true;
       btnLoginSubmit.textContent = 'Signing in...';
       
-      fetch('http://127.0.0.1:8000/api/auth/login', {
+      fetch(`${API_BASE_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -2850,7 +2852,7 @@ function setupAuthListeners() {
       btnRegisterSubmit.disabled = true;
       btnRegisterSubmit.textContent = 'Creating account...';
       
-      fetch('http://127.0.0.1:8000/api/auth/register', {
+      fetch(`${API_BASE_URL}/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -2938,7 +2940,7 @@ function setupWeatherWidget() {
   function fetchWeatherData() {
     toggleWeatherSkeleton(true);
 
-    authFetch('http://127.0.0.1:8000/api/weather/current')
+    authFetch(`${API_BASE_URL}/api/weather/current`)
       .then(res => {
         if (!res.ok) throw new Error('Weather API unavailable');
         return res.json();
